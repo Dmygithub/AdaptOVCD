@@ -1,0 +1,24 @@
+dataset_name: "s2looking"
+description: "S2Looking: Satellite Side-Looking Change Detection dataset"
+
+# Data paths (relative to dataset root)
+data_paths:
+  test_A: "Image1"
+  test_B: "Image2"
+  test_label: "label"
+
+# Evaluation settings
+evaluation:
+  metrics: ["miou", "f1", "oa", "precision", "recall"]
+  threshold: 0.5
+  
+# Dataset properties
+properties:
+  image_size: [1024, 1024]
+  num_classes: 2  # background, change
+  class_names: ["background", "building"]
+  
+# File patterns
+patterns:
+  image_format: "*.png"
+  label_format: "*.png" 

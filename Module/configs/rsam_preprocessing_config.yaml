@@ -1,0 +1,77 @@
+# RSAM (Remote Sensing SAM) Preprocessing Configuration
+# 
+# This module provides efficient and proven preprocessing for OVCD change detection
+# based on RSAM-Seg methodology. Designed for optimal performance with remote sensing data.
+
+# Main switch: Enable RSAM preprocessing
+enable_rsam_preprocessing: true
+
+# RSAM detailed configuration
+rsam_preprocessing_config:
+  
+  # === Core Settings ===
+  img_size: null                              # Target image size (null = dynamic, maintains original size)
+  use_imagenet_norm: true                     # Use ImageNet standard normalization for transformers
+                                             # Mean=[0.485, 0.456, 0.406], Std=[0.229, 0.224, 0.225]
+  preserve_aspect_ratio: false               # Whether to preserve aspect ratio during resize
+  interpolation_mode: "bilinear"             # Resize interpolation: 'bilinear', 'bicubic', 'nearest'
+  
+  # === Minimal Augmentation (RSAM Philosophy) ===
+  enable_augmentation: false                  # Enable data augmentation for training mode
+                                             # Note: RSAM uses minimal augmentation to preserve characteristics
+  
+  # Geometric transformations (only safe ones for remote sensing)
+  with_random_hflip: true                     # Random horizontal flip (50% probability)
+                                             # Safe for remote sensing data
+  with_random_vflip: false                    # Random vertical flip (disabled by default)
+                                             # Less common in remote sensing applications
+  
+  # === Advanced Settings ===
+  verbose_logging: false                      # Enable detailed processing logs
+
+# ===== Configuration Profiles =====
+
+# Profile 1: Production Mode (Current - Recommended)
+# enable_augmentation: false
+# use_imagenet_norm: true
+# img_size: null (dynamic)
+
+# Profile 2: Training Mode
+# enable_augmentation: true
+# with_random_hflip: true
+# with_random_vflip: false
+# use_imagenet_norm: true
+
+# Profile 3: Fixed Size Mode
+# img_size: 1024
+# preserve_aspect_ratio: true
+# interpolation_mode: "bicubic"
+
+# Profile 4: High Performance Mode
+# img_size: null
+# use_imagenet_norm: true
+# enable_augmentation: false
+# verbose_logging: false
+
+# ===== Tuning Guidelines =====
+#
+# For optimal transformer performance:
+# - Keep use_imagenet_norm: true (essential for SAM/DINOv2)
+# - Set img_size: null for dynamic sizing
+# - Use minimal augmentation philosophy
+# 
+# For training robustness:
+# - Set enable_augmentation: true
+# - Keep with_random_hflip: true (safe for remote sensing)
+# - Keep with_random_vflip: false (preserve remote sensing characteristics)
+#
+# For evaluation consistency:
+# - Set enable_augmentation: false
+# - Keep use_imagenet_norm: true
+# - Set img_size: null for original resolution
+#
+# RSAM Advantages over heavy preprocessing:
+# - No artificial illumination alignment (preserves real changes)
+# - No complex normalization chains (reduces numerical errors)
+# - Proven methodology from remote sensing research
+# - Perfect compatibility with transformer models

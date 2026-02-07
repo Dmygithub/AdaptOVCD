@@ -1,0 +1,38 @@
+model_name: "sam_dinov2_dgtrs"
+description: "SAM automatic segmentation + DINOv2 feature comparison + DGTRS-CLIP identification"
+
+segmentor:
+  type: "SAM"
+  sam_version: "vit_h"
+  checkpoint: "models/sam_vit_h_4b8939.pth"
+  sam_hq_checkpoint: null
+  use_sam_hq: false
+  params:
+    points_per_side: 32
+    points_per_batch: 64
+    pred_iou_thresh: 0.5
+    stability_score_thresh: 0.95
+    stability_score_offset: 0.9
+    box_nms_thresh: 0.7
+    min_mask_region_area: 0
+    match_hist: false
+    area_thresh: 0.8
+comparator:
+  type: "DINOv2"
+  feature_dim: 768                       
+  patch_size: 14                         
+  change_confidence_threshold: 140
+
+identifier:
+  type: "DGTRS-CLIP"
+  model_path: "models/DGTRS/LRSCLIP_ViT-L-14.pt"  
+  confidence_threshold: 0.5
+  name_list: ['background', 'building']
+
+# Device configuration
+device: "auto"  # auto-detect cuda/cpu
+
+# Output settings
+output_prefix: "sam_dinov2_dgtrs"
+
+

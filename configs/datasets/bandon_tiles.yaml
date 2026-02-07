@@ -1,0 +1,26 @@
+dataset_name: "bandon_tiles"
+description: "BANDON Building Change Detection Dataset - 1024x1024 Tiles for Testing"
+
+data_paths:
+  test_A: "A"
+  test_B: "B"
+  test_label: "label"
+
+evaluation:
+  metrics: ["miou", "f1", "oa", "precision", "recall"]
+  threshold: 0.5
+  ignore_index: null  # No ignore pixels, 255 represents change
+  
+properties:
+  image_size: [1024, 1024]  # Tiled images
+  num_classes: 2  # background, building change
+  class_names: ["background", "building"]
+  
+patterns:
+  image_format: "*.jpg"
+  label_format: "*.png"
+
+# Dataset-specific notes:
+# - 1024x1024 tiles from 2048x2048 BANDON images
+# - Used for testing if tiling solves processing issues
+# - Each tile is independently processable

@@ -1,0 +1,30 @@
+dataset_name: "second"
+description: "SECOND: Semantic Change Detection dataset"
+
+# Data paths (relative to dataset root)
+data_paths:
+  test_im1: "im1"
+  test_im2: "im2"
+  test_label1: "label1"
+  test_label2: "label2"
+
+# Evaluation settings
+evaluation:
+  metrics: ["miou", "f1", "oa", "precision", "recall"]
+  threshold: 0.5
+  
+# Dataset properties
+properties:
+  image_size: [512, 512]
+  num_classes: 7  # Multiple semantic classes
+  class_names: ["background", "non-veg-ground-surface", "tree", "low-vegetation", "building", "water", "playground"]
+  
+# File patterns
+patterns:
+  image_format: "*.png"
+  label_format: "*.png"
+
+# Special handling for SECOND dataset
+special_handling:
+  dual_temporal_labels: true  # Has separate labels for T1 and T2
+  semantic_classes: true  # Multi-class semantic segmentation 

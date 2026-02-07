@@ -1,0 +1,29 @@
+dataset_name: "bandon"
+description: "BANDON Building Change Detection Dataset (2048x2048 high resolution, preprocessed to A/B/label structure)"
+
+data_paths:
+  test_A: "A"
+  test_B: "B"
+  test_label: "label"
+
+evaluation:
+  metrics: ["miou", "f1", "oa", "precision", "recall"]
+  threshold: 0.5
+  ignore_index: null  # No ignore pixels, 255 represents change
+  
+properties:
+  image_size: [2048, 2048]  # High resolution images
+  num_classes: 2  # background, building change
+  class_names: ["background", "building"]  # Building change detection (consistent with DynamicEarth)
+  
+patterns:
+  image_format: "*.png"  # PNG format images (converted from JPG)
+  label_format: "*.png"  # PNG format labels
+
+# Dataset-specific notes:
+# - Preprocessed from original BANDON_Index structure to standard A/B/label format
+# - Uses labels_unch0ch1ig255 (0=unchanged, 255=changed) - binary format
+# - Images converted from JPG to PNG format for consistency
+# - Images are 2048x2048, larger than DynamicEarth's 1024x1024 version
+# - Compatible with DynamicEarth's building change detection approach
+# - Preprocessing script: utils/bandon.py

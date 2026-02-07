@@ -1,0 +1,21 @@
+dataset_name: "bandon_tiles_temp"
+description: "BANDON Building Change Detection Dataset - Temporary 1024x1024 Tiles"
+
+data_paths:
+  test_A: "A"
+  test_B: "B"
+  test_label: "label"
+
+evaluation:
+  metrics: ["miou", "f1", "oa", "precision", "recall"]
+  threshold: 0.5
+  ignore_index: null
+  
+properties:
+  image_size: [1024, 1024]
+  num_classes: 2
+  class_names: ["background", "building"]
+  
+patterns:
+  image_format: "*.jpg"
+  label_format: "*.png"

@@ -1,0 +1,72 @@
+model_name: "AdaptCD"
+description: "AdaptCD: Adaptive Open-Vocabulary Change Detection for DSIFN dataset"
+# nohup python evaluate.py --dataset dsifn --model OVCD_dsifn --output_dir outputs/dsifn/base  --save_predictions --verbose > log/dsifn/base.log 2>&1 &
+segmentor:
+  type: "SAM"
+  sam_version: "vit_h"
+  checkpoint: "models/sam/sam_vit_h_4b8939.pth"
+  sam_hq_checkpoint: "models/hqsam/sam_hq_vit_h.pth"
+  use_sam_hq: true  # true: HQSAM, false: SAM
+  
+  # ARA (Adaptive Radiometric Alignment)
+  enable_adaptive_radiometric_alignment: true
+  adaptive_radiometric_alignment_config:
+    method: "simple_histogram"
+    preserve_original: true
+    gentle_processing: true
+    clip_extreme: true
+    max_change_ratio: 0.08
+
+  params:
+    points_per_side: 40
+    points_per_batch: 64
+    pred_iou_thresh: 0.7
+    stability_score_thresh: 0.94
+    stability_score_offset: 0.86
+    box_nms_thresh: 0.7
+    min_mask_region_area: 150
+    match_hist: false
+    area_thresh: 0.8
+    mask_threshold: 0.87
+
+comparator:
+  # variant: 'dino_vitb16'
+  # weights_path: null        
+  # variant: 'dinov2_vitl14'  
+  # weights_path: null                   
+  variant: 'dinov3_vitl16'
+  weights_path: 'models/dinov3/dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth'
+  
+  change_confidence_threshold: 130
+
+  # ACT (Adaptive Change Thresholding)
+  enable_adaptive_change_thresholding: true
+  adaptive_change_thresholding_config:
+    global_weight: 0.70
+    edge_weight: 0.30
+    edge_detection_method: "canny"
+    canny_low: 60
+    canny_high: 150
+    edge_dilation_kernel: 3
+    min_edge_pixels: 100
+    min_angle: 120
+    max_angle: 160
+    debug: true  
+
+  enhancement_modules:
+    confidence_filtering:
+      enabled: true
+      config:
+        filter_strength: 0.5 
+        min_region_size: 100
+        debug: false
+
+identifier:
+  type: "DGTRS-CLIP"
+  model_path: "models/DGTRS/LRSCLIP_ViT-L-14.pt"
+  confidence_threshold: 0.5
+  name_list: ['open areas and vegetation', 'roofs and constructions'] 
+
+device: "auto"
+output_prefix: "ovcd_dsifn"
+

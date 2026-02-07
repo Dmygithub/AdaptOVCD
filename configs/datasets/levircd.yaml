@@ -1,0 +1,24 @@
+dataset_name: "levircd"
+description: "LEVIR-CD: Large-scale Land-cover Change Detection dataset"
+
+# Data paths (relative to dataset root)
+data_paths:
+  test_A: "A"
+  test_B: "B"
+  test_label: "label"
+
+# Evaluation settings
+evaluation:
+  metrics: ["miou", "f1", "oa", "precision", "recall"]
+  threshold: 0.5
+  
+# Dataset properties
+properties:
+  image_size: [1024, 1024]
+  num_classes: 2  # background, change
+  class_names: ["background", "change"]
+  
+# File patterns
+patterns:
+  image_format: "*.png"
+  label_format: "*.png" 

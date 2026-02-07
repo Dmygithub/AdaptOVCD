@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+.venv
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+outputs/
+log/
+results/
+*.pth
+*.pt
+!models/hqsam/sam_hq_vit_h.pth
+!models/dinov3/dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth
+!models/DGTRS/LRSCLIP_ViT-L-14.pt
+
+# Datasets (large files)
+data/
+!data/.keep

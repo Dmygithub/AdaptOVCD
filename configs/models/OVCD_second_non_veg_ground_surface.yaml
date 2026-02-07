@@ -1,0 +1,75 @@
+model_name: "AdaptCD"
+description: "AdaptCD: Adaptive Open-Vocabulary Change Detection for SECOND dataset - Non-Vegetated Ground Surface category"
+# nohup python evaluate_second.py --class non_veg_ground_surface --output_dir outputs/second/non_veg_ground_surface/v3  --save_predictions  --verbose > log/second/non_veg_ground_surface/v3.log 2>&1 &
+segmentor:
+  type: "SAM"
+  sam_version: "vit_h"
+  checkpoint: "models/sam/sam_vit_h_4b8939.pth"
+  sam_hq_checkpoint: "models/hqsam/sam_hq_vit_h.pth"
+  use_sam_hq: true  # true: HQSAM, false: SAM
+  
+  # ARA (Adaptive Radiometric Alignment)
+  enable_adaptive_radiometric_alignment: true
+  adaptive_radiometric_alignment_config:
+    method: "simple_histogram"
+    preserve_original: true
+    gentle_processing: true
+    clip_extreme: true
+    max_change_ratio: 0.04
+
+  params:
+    points_per_side: 36
+    points_per_batch: 64
+    pred_iou_thresh: 0.7
+    stability_score_thresh: 0.8
+    stability_score_offset: 0.87
+    box_nms_thresh: 0.95
+    min_mask_region_area: 0
+    match_hist: false
+    area_thresh: 0.8
+    mask_threshold: 0.05
+
+comparator:
+  # variant: 'dino_vitb16'
+  # weights_path: null        
+  # variant: 'dinov2_vitl14'  
+  # weights_path: null                  
+  variant: 'dinov3_vitl16'
+  weights_path: 'models/dinov3/dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth'
+  
+  change_confidence_threshold: 135
+
+  # ACT (Adaptive Change Thresholding)
+  enable_adaptive_change_thresholding: true
+  adaptive_change_thresholding_config:
+    global_weight: 0.80
+    edge_weight: 0.30
+    edge_detection_method: "canny"
+    canny_low: 60
+    canny_high: 160
+    edge_dilation_kernel: 3
+    min_edge_pixels: 100
+    min_angle: 120
+    max_angle: 160
+    debug: false
+
+  enhancement_modules:
+    confidence_filtering:
+      enabled: true
+      config:
+        filter_strength: 0.5
+        min_region_size: 570
+        debug: false
+
+identifier:
+  type: "DGTRS-CLIP"
+  model_path: "models/DGTRS/LRSCLIP_ViT-L-14.pt"
+  confidence_threshold: 0.5
+  name_list: ['buildings,trees,water,vegetation,grass,forest,vegetated areas areas and features', 'bare ground,exposed soil,sand,dirt,paved surfaces,concrete,asphalt,rocky ground areas and features']
+  # name_list: ['buildings,vegetation,trees,water,grass,forest,vegetated areas areas and features', 'bare ground,exposed soil,sand,dirt,paved surfaces,concrete,asphalt,rocky ground areas and features']
+  # name_list: ['buildings,trees,water,vegetation,grass,forest,vegetated areas areas and features', 'sand,bare ground,exposed soil,dirt,paved surfaces,concrete,asphalt,rocky ground areas and features']
+  # name_list: ['buildings,trees,water,vegetation,grass,forest,vegetated areas areas and features', 'sand,dirt,bare ground,exposed soil,paved surfaces,concrete,asphalt,rocky ground areas and features']
+  # name_list: ['buildings,vegetation,trees,water,grass,forest,vegetated areas areas and features', 'sand,bare ground,exposed soil,dirt,paved surfaces,concrete,asphalt,rocky ground areas and features'] 
+device: "auto"
+output_prefix: "ovcd_second_non_veg_ground_surface"
+

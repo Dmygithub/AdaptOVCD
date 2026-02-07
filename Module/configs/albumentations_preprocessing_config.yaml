@@ -1,0 +1,34 @@
+# Albumentations-based Preprocessing Module Configuration
+# High-quality image enhancement for remote sensing change detection
+
+# Core Enhancement Settings
+enable_histogram_matching: true        # Enable bi-temporal histogram alignment
+histogram_blend_ratio: 0.8            # Histogram matching strength [0,1], 0.8 = strong alignment
+
+enable_clahe: true                     # Enable adaptive contrast enhancement  
+clahe_clip_limit: 2.0                 # CLAHE contrast limiting [1.0-4.0], higher = more contrast
+clahe_tile_size: [8, 8]               # CLAHE grid size, smaller = more local enhancement
+
+enable_illumination_correction: false  # Optional illumination normalization
+illumination_intensity: 0.1           # Illumination correction strength [0,1]
+illumination_mode: "linear"           # Correction mode: "linear" or "gamma"
+
+# Augmentation Settings (Training Only)
+enable_augmentation: false            # Master switch for all augmentations
+with_random_hflip: false              # Horizontal flip probability (disabled when augmentation=false)
+with_random_vflip: false              # Vertical flip probability (disabled when augmentation=false)
+
+# Normalization Settings  
+use_imagenet_norm: true               # Apply ImageNet normalization for downstream models
+
+# Output Format Control
+output_for_sam: true                  # Output uint8 images for SAM compatibility
+output_for_downstream: false         # Output normalized float for DINOv2/etc (set via code)
+
+# Processing Parameters
+img_size: 1024                        # Target image size (if resizing needed)
+interpolation_mode: "bilinear"        # Interpolation method for resizing
+
+# Quality Control
+preserve_aspect_ratio: true           # Maintain aspect ratio during resizing
+handle_edge_artifacts: true          # Apply edge artifact reduction

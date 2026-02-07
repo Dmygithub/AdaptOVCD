@@ -1,0 +1,71 @@
+model_name: "AdaptCD"
+description: "AdaptCD: Adaptive Open-Vocabulary Change Detection for LEVIRCD dataset"
+# python demo.py --model demo --input1 demo_images/A/test_115.png --input2 demo_images/B/test_115.png --output outputs/demo
+segmentor:
+  type: "SAM"
+  sam_version: "vit_h"
+  checkpoint: "models/sam/sam_vit_h_4b8939.pth"
+  sam_hq_checkpoint: "models/hqsam/sam_hq_vit_h.pth"
+  use_sam_hq: true  # true: HQSAM, false: SAM
+  
+  # ARA (Adaptive Radiometric Alignment)
+  enable_adaptive_radiometric_alignment: true
+  adaptive_radiometric_alignment_config:
+    method: "simple_histogram"
+    preserve_original: true
+    gentle_processing: true
+    clip_extreme: true
+    max_change_ratio: 0.03
+
+  params:
+    points_per_side: 42
+    points_per_batch: 64
+    pred_iou_thresh: 0.7
+    stability_score_thresh: 0.95
+    stability_score_offset: 0.83
+    box_nms_thresh: 0.57
+    min_mask_region_area: 100
+    match_hist: false
+    area_thresh: 0.8
+    mask_threshold: 0.95
+
+comparator:
+  # variant: 'dino_vitb16'
+  # weights_path: null         
+  # variant: 'dinov2_vitl14'  
+  # weights_path: null                   
+  variant: 'dinov3_vitl16'
+  weights_path: 'models/dinov3/dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth'
+  
+  change_confidence_threshold: 140
+
+  # ACT (Adaptive Change Thresholding)
+  enable_adaptive_change_thresholding: true
+  adaptive_change_thresholding_config:
+    global_weight: 0.1
+    edge_weight: 1
+    edge_detection_method: "canny"
+    canny_low: 90
+    canny_high: 170
+    edge_dilation_kernel: 2
+    min_edge_pixels: 100
+    min_angle: 120
+    max_angle: 160
+    debug: true
+
+  enhancement_modules:
+    confidence_filtering:
+      enabled: true
+      config:
+        filter_strength: 0.5
+        min_region_size: 400
+        debug: false
+
+identifier:
+  type: "DGTRS-CLIP"
+  model_path: "models/DGTRS/LRSCLIP_ViT-L-14.pt"
+  confidence_threshold: 0.5
+  name_list: ['open ground, vegetation, and non-building areas', 'buildings, rooftops, and urban structures']
+device: "auto"
+output_prefix: "ovcd_levircd"
+

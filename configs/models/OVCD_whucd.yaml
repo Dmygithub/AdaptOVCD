@@ -1,0 +1,72 @@
+model_name: "AdaptCD"
+description: "AdaptCD: Adaptive Open-Vocabulary Change Detection for WHUCD dataset"
+# nohup python evaluate.py --dataset whucd --model OVCD_whucd --output_dir outputs/whucd/base  --save_predictions --verbose > log/whucd/base.log 2>&1 &
+segmentor:
+  type: "SAM"
+  sam_version: "vit_h"
+  checkpoint: "models/sam/sam_vit_h_4b8939.pth"
+  sam_hq_checkpoint: "models/hqsam/sam_hq_vit_h.pth"
+  use_sam_hq: true
+  
+  # ARA (Adaptive Radiometric Alignment)
+  enable_adaptive_radiometric_alignment: true
+  adaptive_radiometric_alignment_config:
+    method: "simple_histogram"
+    preserve_original: true
+    gentle_processing: true
+    clip_extreme: true
+    max_change_ratio: 0.03 
+
+  params:
+    points_per_side: 32
+    points_per_batch: 64
+    pred_iou_thresh: 0.95
+    stability_score_thresh: 0.93
+    stability_score_offset: 0.92
+    box_nms_thresh: 0.8
+    min_mask_region_area: 300
+    match_hist: false
+    area_thresh: 0.9
+    mask_threshold: 0.9
+
+comparator:
+  # variant: 'dino_vitb16'
+  # weights_path: null 
+  # variant: 'dinov2_vitl14'  
+  # weights_path: null                 
+  variant: 'dinov3_vitl16'
+  weights_path: 'models/dinov3/dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth'
+  
+  change_confidence_threshold: 140
+
+  # ACT (Adaptive Change Thresholding)
+  enable_adaptive_change_thresholding: true
+  adaptive_change_thresholding_config:
+    global_weight: 0.1
+    edge_weight: 0.2
+    edge_detection_method: "canny"
+    canny_low: 40
+    canny_high: 150
+    edge_dilation_kernel: 3
+    min_edge_pixels: 100
+    min_angle: 120
+    max_angle: 150
+    debug: false
+
+  enhancement_modules:
+    confidence_filtering:
+      enabled: true
+      config:
+        filter_strength: 0.5
+        min_region_size: 1000
+        debug: false
+
+identifier:
+  type: "DGTRS-CLIP"
+  model_path: "models/DGTRS/LRSCLIP_ViT-L-14.pt"
+  confidence_threshold: 0.5
+  name_list: ['background,open ground,trees,vegetation,green spaces,roads,non-building areas areas and features', 'large urban buildings,large rooftops,urban houses,urban structures areas and features']
+  
+device: "auto"
+output_prefix: "ovcd_whucd"
+
