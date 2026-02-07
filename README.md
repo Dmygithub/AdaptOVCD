@@ -12,11 +12,15 @@
 
 **AdaptOVCD** is a training-free framework for open-vocabulary change detection in remote sensing imagery. By synergistically integrating three foundation models with adaptive enhancement modules, AdaptOVCD enables zero-shot detection of arbitrary change categories specified via natural language—without any task-specific training or annotated data.
 
+### Framework Overview
+
+The pipeline implements dual-dimensional multi-level information fusion: vertically constructing a data-feature-decision cascade, and horizontally conducting targeted adaptive designs at each level.
+
 ![Figure 2: Framework Overview](fig/fig2.jpg)
 
 ### Visualization of Intermediate Processes
 
-To better understand the model's internal mechanism, we visualize the intermediate features and attention maps:
+To gain a deeper understanding of the mechanism of each module, we visualize the intermediate processes of AdaptOVCD. The visualization demonstrates the progressive filtering effect, where spurious detections are correctly eliminated while authentic changes are retained.
 
 ![Figure 5: Intermediate Process Visualization](fig/fig5.jpg)
 
@@ -181,9 +185,13 @@ Available SECOND classes: `building`, `water`, `tree`, `low_vegetation`, `non_ve
 
 ### Qualitative Results
 
-![Figure 3: Visual Comparison 1](fig/fig3.jpg)
+**Building Change Detection** on LEVIR-CD, WHU-CD, DSIFN, and SECOND (Building):
 
-![Figure 4: Visual Comparison 2](fig/fig4.jpg)
+![Figure 3: Building Change Detection Results](fig/fig3.jpg)
+
+**Open-Vocabulary Change Detection** on SECOND across six semantic categories (Building, Low Vegetation, Non-veg. Ground, Playground, Tree, Water):
+
+![Figure 4: Open-Vocabulary Results](fig/fig4.jpg)
 
 ### Save Predictions
 
@@ -210,6 +218,7 @@ python evaluate.py --model OVCD_levircd --dataset levircd --save_predictions --o
 - [DINOv3](https://github.com/facebookresearch/dinov3) (Meta License)
 - [DGTRS-CLIP](https://github.com/MitsuiChen14/DGTRS) (Apache 2.0)
 - [CLIP](https://github.com/openai/CLIP) (MIT)
+- [DynamicEarth](https://github.com/likyoo/DynamicEarth)
 
 ## License
 
