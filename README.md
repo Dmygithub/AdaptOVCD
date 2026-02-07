@@ -14,7 +14,11 @@
 
 ![Figure 2: Framework Overview](fig/fig2.jpg)
 
-![Figure 3: Method Details](fig/fig3.jpg)
+### Visualization of Intermediate Processes
+
+To better understand the model's internal mechanism, we visualize the intermediate features and attention maps:
+
+![Figure 5: Intermediate Process Visualization](fig/fig5.jpg)
 
 ## Installation
 
@@ -177,9 +181,9 @@ Available SECOND classes: `building`, `water`, `tree`, `low_vegetation`, `non_ve
 
 ### Qualitative Results
 
-![Figure 4: Visual Comparison](fig/fig4.jpg)
+![Figure 3: Visual Comparison 1](fig/fig3.jpg)
 
-![Figure 5: Additional Results](fig/fig5.jpg)
+![Figure 4: Visual Comparison 2](fig/fig4.jpg)
 
 ### Save Predictions
 
