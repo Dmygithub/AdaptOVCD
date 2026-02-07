@@ -32,19 +32,13 @@ See [INSTALL.md](INSTALL.md) for detailed setup instructions.
 
 ```
 AdaptOVCD/
-├── models/                                # Model weights
-│   ├── hqsam/
-│   │   └── sam_hq_vit_h.pth
-│   ├── dinov3/
-│   │   └── dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth
-│   └── DGTRS/
-│       └── LRSCLIP_ViT-L-14.pt
-├── third_party/                           # Pre-packaged dependencies
-├── data/                                  # Raw datasets (preprocessing required)
+├── models/                                # See INSTALL.md for setup
+├── third_party/                           # See INSTALL.md for setup
+├── data/                                  # Download required
 │   ├── levircd/                           # Ready to use
-│   ├── Building change detection dataset_add/  # WHU-CD raw
-│   ├── DSIFN/                             # DSIFN raw
-│   └── second_dataset/                    # SECOND raw
+│   ├── Building change detection dataset_add/  # Preprocessing required
+│   ├── DSIFN/                             # Preprocessing required
+│   └── second_dataset/                    # Preprocessing required
 ├── configs/
 │   ├── models/                            # Model configurations
 │   └── datasets/                          # Dataset configurations
@@ -53,8 +47,8 @@ AdaptOVCD/
 │       ├── dsifn.py
 │       ├── second.py
 │       └── whucd.py
-├── evaluate.py                            # Binary CD evaluation (LEVIR-CD, WHU-CD, DSIFN)
-├── evaluate_second.py                     # Semantic CD evaluation (SECOND)
+├── evaluate.py                            # LEVIR-CD, WHU-CD, DSIFN evaluation
+├── evaluate_second.py                     # SECOND evaluation
 └── demo.py                                # Demo script
 ```
 
