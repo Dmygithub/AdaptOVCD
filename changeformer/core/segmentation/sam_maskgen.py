@@ -1,7 +1,7 @@
 """
 SAM mask generation utilities.
 
-This module contains the mask generators.
+This module contains the mask generators migrated from the original dynamic_earth project.
 """
 
 import os
@@ -11,7 +11,7 @@ import numpy as np
 from skimage.exposure import match_histograms
 from typing import Dict, Any, Tuple
 
-# Import from torchvision
+# Import from torchvision (exactly like original version)
 from torchvision.ops.boxes import batched_nms, box_area
 
 # Ensure third_party paths are added
@@ -90,7 +90,7 @@ if SAM_AVAILABLE:
             return mask_data
         
         def _simple_generate_masks(self, image: np.ndarray) -> MaskData:
-        """Generate masks using crop-based approach."""
+            """Generate masks using crop-based approach - exact copy from original."""
             orig_size = image.shape[:2]
             crop_boxes, layer_idxs = generate_crop_boxes(
                 orig_size, self.crop_n_layers, self.crop_overlap_ratio
@@ -132,6 +132,7 @@ class MaskProposal:
     """
     Mask proposal generator for SAM-based segmentation.
     
+    Migrated from dynamic_earth/sam_ext/mask_proposal.py
     """
     
     def __init__(self):
@@ -239,7 +240,7 @@ class MaskProposal:
             data.cat(d)
             mask_num.append(l)
 
-        # Apply NMS to remove duplicate masks
+        # Apply NMS to remove duplicate masks (exact copy from original)
         keep = batched_nms(
             data["boxes"].float(),
             data["iou_preds"],

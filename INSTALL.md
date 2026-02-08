@@ -13,11 +13,11 @@ Training-free open-vocabulary change detection framework using foundation model 
 
 ```bash
 # Create conda environment
-conda create -n OVCD python=3.11 -c conda-forge -y
-conda activate OVCD
+conda create -n adaptovcd python=3.11 -c conda-forge -y
+conda activate adaptovcd
 
 # Navigate to project directory
-cd /path/to/OVCD
+cd /path/to/AdaptOVCD
 
 # Install PyTorch with CUDA 12.1
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
@@ -35,42 +35,43 @@ pip install opencv-python scikit-image pycocotools timm transformers==4.36.0 ein
 High-quality instance segmentation with boundary refinement.
 
 ```bash
-# Clone SAM-HQ repository
+mkdir -p third_party
 cd third_party
+
+# 1. Install Original SAM (Required Base)
+git clone https://github.com/facebookresearch/segment-anything.git
+cd segment-anything
+pip install -e .
+cd ..
+
+# 2. Install SAM-HQ (Extension)
 git clone https://github.com/SysCV/sam-hq.git
 cd sam-hq
 
-# Copy HQ extension to SAM codebase
+# Copy HQ extension and pre-configured __init__.py (Critical Step!)
 cp seginw/segment_anything/build_sam_hq.py segment_anything/
+cp ../../patches/sam_hq_init.py segment_anything/__init__.py
 
-# Install
+# Install extension
 pip install -e .
 cd ../..
 
 # Download SAM-HQ weights (2.39GB)
 mkdir -p models/hqsam
+mkdir -p models/sam
+
+# Option A: SAM-HQ (Recommended)
 wget https://huggingface.co/lkeab/hq-sam/resolve/main/sam_hq_vit_h.pth \
      -O models/hqsam/sam_hq_vit_h.pth
-```
 
-<details>
-<summary><b>Alternative: SAM (original)</b></summary>
+# Or use mirror (if above fails):
+wget https://hf-mirror.com/lkeab/hq-sam/resolve/main/sam_hq_vit_h.pth \
+     -O models/hqsam/sam_hq_vit_h.pth
 
-```bash
-# Clone and install original SAM
-cd third_party
-git clone https://github.com/facebookresearch/segment-anything.git
-cd segment-anything
-pip install -e .
-cd ../..
-
-# Download SAM weights (2.39GB)
-mkdir -p models/sam
+# Option B: Original SAM (Optional backup)
 wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth \
      -O models/sam/sam_vit_h_4b8939.pth
 ```
-
-</details>
 
 ---
 
@@ -166,15 +167,24 @@ cd third_party
 git clone https://github.com/openai/CLIP.git
 cd CLIP
 pip install -e .
-cd ../..
+cd ..
+
+# Clone DGTRS repository (required for longclip module)
+git clone https://github.com/MitsuiChen14/DGTRS.git
+cd ..
 
 # Download DGTRS-CLIP weights (1.7GB)
 mkdir -p models/DGTRS
-wget https://huggingface.co/DAMO-NLP-SG/GeoChat/resolve/main/LRSCLIP_ViT-L-14.pt \
+wget https://huggingface.co/MitsuiChen14/DGTRS-CLIP-ViT-L-14/resolve/09dc0a7b6532f769aa64dae957bfbad068d2735f/LRSCLIP_ViT-L-14.pt \
+     -O models/DGTRS/LRSCLIP_ViT-L-14.pt
+
+# Or use mirror (if above fails):
+wget https://hf-mirror.com/MitsuiChen14/DGTRS-CLIP-ViT-L-14/resolve/09dc0a7b6532f769aa64dae957bfbad068d2735f/LRSCLIP_ViT-L-14.pt \
      -O models/DGTRS/LRSCLIP_ViT-L-14.pt
 ```
 
 **Note:** DGTRS-CLIP is a remote sensing fine-tuned version of CLIP from the [RS5M project](https://github.com/om-ai-lab/RS5M).
+> **Version Note:** The link above points to the specific `LRSCLIP_ViT-L-14.pt` (March 2025 version) used in the paper, ensuring reproducibility. Manual download is available [here](https://huggingface.co/MitsuiChen14/DGTRS-CLIP-ViT-L-14/blob/09dc0a7b6532f769aa64dae957bfbad068d2735f/LRSCLIP_ViT-L-14.pt).
 
 ---
 
@@ -195,7 +205,9 @@ python demo.py --help
 **Expected Directory Structure:**
 
 ```
-OVCD/
+AdaptOVCD/
+├── patches/                   # Pre-configured files
+│   └── sam_hq_init.py
 ├── models/                    # Model weights (~5.3GB total)
 │   ├── hqsam/
 │   │   └── sam_hq_vit_h.pth
@@ -204,9 +216,11 @@ OVCD/
 │   └── DGTRS/
 │       └── LRSCLIP_ViT-L-14.pt
 ├── third_party/               # Cloned repositories
+│   ├── segment-anything/
 │   ├── sam-hq/
 │   ├── dinov3/
-│   └── CLIP/
+│   ├── CLIP/
+│   └── DGTRS/
 └── configs/
     └── models/
         └── OVCD_*.yaml        # Pre-configured models
@@ -218,8 +232,8 @@ OVCD/
 # Run demo on sample images
 python demo.py \
   --model OVCD_levircd \
-  --input1 demo_images/A/00004.png \
-  --input2 demo_images/B/00004.png
+  --input1 demo_images/A/test_5.png \
+  --input2 demo_images/B/test_5.png
 
 # Run evaluation on LEVIR-CD dataset
 python evaluate.py \
@@ -227,19 +241,4 @@ python evaluate.py \
   --model OVCD_levircd \
   --save_predictions
 ```
-
-## Troubleshooting
-
-**Issue: `ImportError: No module named 'segment_anything'`**
-- Ensure you ran `pip install -e .` inside `third_party/sam-hq/`
-
-**Issue: DINOv3 weights not found**
-- If you don't have DINOv3 access, use DINOv2 as described above
-- Check filename matches exactly: `dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth`
-
-**Issue: CUDA out of memory**
-- Reduce `points_per_side` in config (default: 42 → try 32)
-- Use smaller batch size in SAM parameters
-
-For more issues, see [GitHub Issues](https://github.com/Dmygithub/AdaptOVCD/issues).
 
