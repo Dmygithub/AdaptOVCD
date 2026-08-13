@@ -4,7 +4,7 @@
 
 ### Training-Free Open-Vocabulary Change Detection via Adaptive Foundation Model Synergy
 
-[Paper]() | [arXiv]()
+[Paper](https://arxiv.org/abs/2602.06529) | [arXiv](https://arxiv.org/abs/2602.06529)
 
 </div>
 
